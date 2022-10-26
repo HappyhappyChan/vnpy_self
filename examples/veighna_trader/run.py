@@ -15,6 +15,8 @@ from vnpy.trader.object import BarData, TickData
 # 脚本加载TuShare数据服务 --- begin 2.1--
 from vnpy.trader.datafeed import get_datafeed
 from vnpy.trader.object import HistoryRequest
+from vnpy_tushare import tushare_datafeed
+# 脚本加载TuShare数据服务 --- end 2.1--
 
 from vnpy_ctp import CtpGateway
 # from vnpy_ctptest import CtptestGateway
@@ -106,7 +108,47 @@ def main():
 
     qapp.exec()
 
+    # 脚本加载TuShare数据服务 --- begin 2.2--
+    datafeed = tushare_datafeed.TushareDatafeed()
+    # datafeed = get_datafeed()
+    # 获取k线级别的历史数据
+    # req = HistoryRequest(
+    #     # 合约代码（示例 IF2306 股指2306 合约代码，仅用于示范，具体合约代码请根据需求查询数据服务提供商）
+    #     symbol="IF2306",
+    #     # 合约所在交易所
+    #     exchange=Exchange.CFFEX,
+    #     # 历史数据开始时间
+    #     start=datetime(2022, 1, 1),
+    #     # 历史数据结束时间
+    #     end=datetime(2022, 10, 25),
+    #     # 数据时间粒度，默认可选分钟级、小时级和日级，具体选择需要结合该数据服务的权限和需求自行选择
+    #     interval=Interval.DAILY
+    # )
 
+    # 因为积分权限不够，无法获取期货数据，改成获取股票日线数据
+    req = HistoryRequest(
+            # 合约代码（示例 IF2306 股指2306 合约代码，仅用于示范，具体合约代码请根据需求查询数据服务提供商）
+            symbol="000002",
+            # 合约所在交易所
+            exchange=Exchange.SZSE,
+            # 历史数据开始时间
+            start=datetime(2019, 1, 1),
+            # 历史数据结束时间
+            end=datetime(2022, 10, 25),
+            # 数据时间粒度，默认可选分钟级、小时级和日级，具体选择需要结合该数据服务的权限和需求自行选择
+            interval=Interval.DAILY
+        )
+    # 获取k线历史数据
+    data = datafeed.query_bar_history(req)
+    # print(type(data))
+    # 然后将读取到的数据写入数据库中
+    database = get_database()
+    database.save_bar_data(data)
+    # 脚本加载TuShare数据服务 --- end 2.2--
+    
+
+
+"""
     # 脚本加载数据库 --- begin 1.2 --
     database = get_database()
 
@@ -129,21 +171,21 @@ def main():
 
     # 数据库读取 --- begin 1.3 --
     # 读取数据库中k线数据
-    bar1 = database.load_bar_data(
-        symbol=symbol,
-        exchange=exchange,
-        interval=interval,
-        start=start,
-        end=end
-    )
+    # bar1 = database.load_bar_data(
+    #     symbol=symbol,
+    #     exchange=exchange,
+    #     interval=interval,
+    #     start=start,
+    #     end=end
+    # )
 
-    # 读取数据库中tick数据
-    tick1 = database.load_tick_data(
-        symbol=symbol,
-        exchange=exchange,
-        start=start,
-        end=end
-    )
+    # # 读取数据库中tick数据
+    # tick1 = database.load_tick_data(
+    #     symbol=symbol,
+    #     exchange=exchange,
+    #     start=start,
+    #     end=end
+    # )
 
     # 数据库读取 --- end 1.3 --
 
@@ -161,6 +203,7 @@ def main():
     # # 将tick数据存入数据库
     # database.save_tick_data(tick_data)
     # 数据库写入 --- end 1.4 --
+"""
     
 if __name__ == "__main__":
     main()
