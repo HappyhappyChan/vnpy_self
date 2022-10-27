@@ -13,10 +13,14 @@ from vnpy.trader.object import BarData, TickData
 # 脚本加载数据库 --- end 1.1--
 
 # 脚本加载TuShare数据服务 --- begin 2.1--
+# from vnpy.trader.datafeed import get_datafeed
+# from vnpy.trader.object import HistoryRequest
+# from vnpy_tushare import tushare_datafeed
+# 脚本加载TuShare数据服务 --- end 2.1--
+
 from vnpy.trader.datafeed import get_datafeed
 from vnpy.trader.object import HistoryRequest
-from vnpy_tushare import tushare_datafeed
-# 脚本加载TuShare数据服务 --- end 2.1--
+from vnpy_rqdata import rqdata_datafeed
 
 from vnpy_ctp import CtpGateway
 # from vnpy_ctptest import CtptestGateway
@@ -87,6 +91,7 @@ def main():
     # main_engine.add_gateway(NhStockGateway)
 
     main_engine.add_app(PaperAccountApp)
+    # 加载CtaStrategy模块
     main_engine.add_app(CtaStrategyApp)
     main_engine.add_app(CtaBacktesterApp)
     main_engine.add_app(SpreadTradingApp)
@@ -107,7 +112,31 @@ def main():
     main_window.showMaximized()
 
     qapp.exec()
+    # 利用rqdata加载数据
+    datafeed = rqdata_datafeed.RqdataDatafeed()
+    datafeed = get_datafeed()
+    # 获取k线级别的历史数据
+    req = HistoryRequest(
+        # 合约代码（示例 IF2306 股指2306 合约代码，仅用于示范，具体合约代码请根据需求查询数据服务提供商）
+        symbol="IF2306",
+        # 合约所在交易所
+        exchange=Exchange.CFFEX,
+        # 历史数据开始时间
+        start=datetime(2019, 1, 1),
+        # 历史数据结束时间
+        end=datetime(2022, 10, 25),
+        # 数据时间粒度，默认可选分钟级、小时级和日级，具体选择需要结合该数据服务的权限和需求自行选择
+        interval=Interval.DAILY
+    )
 
+    #   获取k线历史数据
+    data = datafeed.query_bar_history(req)
+    print(type(data))
+    # 然后将读取到的数据写入数据库中
+    database = get_database()
+    database.save_bar_data(data)
+
+    """
     # 脚本加载TuShare数据服务 --- begin 2.2--
     datafeed = tushare_datafeed.TushareDatafeed()
     # datafeed = get_datafeed()
@@ -145,10 +174,10 @@ def main():
     database = get_database()
     database.save_bar_data(data)
     # 脚本加载TuShare数据服务 --- end 2.2--
-    
+    """
 
 
-"""
+    """
     # 脚本加载数据库 --- begin 1.2 --
     database = get_database()
 
@@ -203,7 +232,7 @@ def main():
     # # 将tick数据存入数据库
     # database.save_tick_data(tick_data)
     # 数据库写入 --- end 1.4 --
-"""
+    """
     
 if __name__ == "__main__":
     main()
