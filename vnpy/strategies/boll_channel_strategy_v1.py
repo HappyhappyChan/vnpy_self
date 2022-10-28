@@ -63,7 +63,7 @@ class BollChannelStrategy01(CtaTemplate):
         再调用load_bar函数加载历史数据
         调用完on_init函数之后, 策略的inited状态才变为【True】
         """
-        self.writelog("策略初始化")
+        self.write_log("策略初始化")
         # 如果是基于Tick数据回测，请在此处调用load_tick函数
         self.load_bar(10)
 

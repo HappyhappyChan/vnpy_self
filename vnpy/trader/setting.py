@@ -33,7 +33,7 @@ SETTINGS: Dict[str, Any] = {
     # "datafeed.password": "c044c2469407484159d4f7dfa2d438f5ac3e4fc89f540264c95ce268",
     "datafeed.name": "rqdata",
     "datafeed.username": "license",
-    "datafeed.password": "写入token",
+    "datafeed.password": "",
 
     "database.timezone": get_localzone_name(),
     # "database.name": "sqlite",

@@ -22,6 +22,8 @@ from vnpy.trader.datafeed import get_datafeed
 from vnpy.trader.object import HistoryRequest
 from vnpy_rqdata import rqdata_datafeed
 
+from vnpy.trader.utility import TRADER_DIR
+
 from vnpy_ctp import CtpGateway
 # from vnpy_ctptest import CtptestGateway
 # from vnpy_mini import MiniGateway
@@ -43,6 +45,7 @@ from vnpy_ctp import CtpGateway
 # from vnpy_hft import GtjaGateway
 
 from vnpy_ctastrategy import CtaStrategyApp
+# 加载cta回测研究模块
 from vnpy_ctabacktester import CtaBacktesterApp
 from vnpy_spreadtrading import SpreadTradingApp
 from vnpy_algotrading import AlgoTradingApp
@@ -68,6 +71,7 @@ def main():
 
     main_engine = MainEngine(event_engine)
 
+    print(TRADER_DIR)
     main_engine.add_gateway(CtpGateway)
     # main_engine.add_gateway(CtptestGateway)
     # main_engine.add_gateway(MiniGateway)
@@ -93,6 +97,7 @@ def main():
     main_engine.add_app(PaperAccountApp)
     # 加载CtaStrategy模块
     main_engine.add_app(CtaStrategyApp)
+    # 加载cta回测研究模块
     main_engine.add_app(CtaBacktesterApp)
     main_engine.add_app(SpreadTradingApp)
     main_engine.add_app(AlgoTradingApp)
@@ -111,31 +116,35 @@ def main():
     main_window = MainWindow(main_engine, event_engine)
     main_window.showMaximized()
 
-    qapp.exec()
+    
     # 利用rqdata加载数据
-    datafeed = rqdata_datafeed.RqdataDatafeed()
-    datafeed = get_datafeed()
-    # 获取k线级别的历史数据
-    req = HistoryRequest(
-        # 合约代码（示例 IF2306 股指2306 合约代码，仅用于示范，具体合约代码请根据需求查询数据服务提供商）
-        symbol="IF2306",
-        # 合约所在交易所
-        exchange=Exchange.CFFEX,
-        # 历史数据开始时间
-        start=datetime(2019, 1, 1),
-        # 历史数据结束时间
-        end=datetime(2022, 10, 25),
-        # 数据时间粒度，默认可选分钟级、小时级和日级，具体选择需要结合该数据服务的权限和需求自行选择
-        interval=Interval.DAILY
-    )
+    # datafeed = rqdata_datafeed.RqdataDatafeed()
+    # datafeed = get_datafeed()
+    # # 获取k线级别的历史数据
+    # req = HistoryRequest(
+    #     # 合约代码（示例 IF2306 股指2306 合约代码，仅用于示范，具体合约代码请根据需求查询数据服务提供商）
+    #     # symbol="IF2306",
+    #     # symbol="IF1905",
+    #     # symbol="cu1905",  #SHFE
+    #     symbol="pb1905", #SHFE 600519.SSE 茅台 	300750.SZSE 宁德时代 603019.SSE 中科曙光
+    #     # 合约所在交易所
+    #     exchange=Exchange.SHFE,
+    #     # 历史数据开始时间
+    #     start=datetime(2019, 1, 1),
+    #     # 历史数据结束时间
+    #     end=datetime(2022, 10, 25),
+    #     # 数据时间粒度，默认可选分钟级、小时级和日级，具体选择需要结合该数据服务的权限和需求自行选择
+    #     interval=Interval.DAILY
+    # )
 
-    #   获取k线历史数据
-    data = datafeed.query_bar_history(req)
-    print(type(data))
-    # 然后将读取到的数据写入数据库中
-    database = get_database()
-    database.save_bar_data(data)
+    # #   获取k线历史数据
+    # data = datafeed.query_bar_history(req)
+    # print(len(data))
+    # # 然后将读取到的数据写入数据库中
+    # database = get_database()
+    # database.save_bar_data(data)
 
+    qapp.exec()
     """
     # 脚本加载TuShare数据服务 --- begin 2.2--
     datafeed = tushare_datafeed.TushareDatafeed()

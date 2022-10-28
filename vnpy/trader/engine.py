@@ -108,7 +108,7 @@ class MainEngine:
         self.add_engine(LogEngine)
         self.add_engine(OmsEngine)
         self.add_engine(EmailEngine)
-
+        
     def write_log(self, msg: str, source: str = "") -> None:
         """
         Put log event with specific message.

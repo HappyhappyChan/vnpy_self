@@ -54,19 +54,25 @@ def _get_trader_dir(temp_name: str) -> Tuple[Path, Path]:
         return cwd, temp_path
 
     # Otherwise use home path of system.
-    home_path: Path = Path.home()
-    temp_path: Path = home_path.joinpath(temp_name)
+    # home_path: Path = Path.home()
+    # temp_path: Path = home_path.joinpath(temp_name)
+
+    # 将这里修改为指定的目录
+    run_path: Path = Path("F:/veighna_station_running_contents/")
+    temp_path: Path = run_path.joinpath(temp_name)
 
     # Create .vntrader folder under home path if not exist.
     if not temp_path.exists():
         temp_path.mkdir()
 
-    return home_path, temp_path
+    return run_path, temp_path
 
 
 TRADER_DIR, TEMP_DIR = _get_trader_dir(".vntrader")
+# print("TRADER_DIR-->", TRADER_DIR, "\n")
+# print("TEMP_DIR-->", TEMP_DIR, "\n")
 sys.path.append(str(TRADER_DIR))
-
+# print("TEMP_DIR-->", TRADER_DIR, "\n")
 
 def get_file_path(filename: str) -> Path:
     """

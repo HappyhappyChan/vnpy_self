@@ -73,10 +73,14 @@ def run_child():
     main_engine.write_log("连接CTP接口")
 
     sleep(10)
-
+    #从rqdata获得数据，加载所有策略文件 \
+    # 加载setting文件中设定的策略 \
+    # 加载cta_strategy_data.json文件中的数据 \
+    # 注册tick,order等事件。
     cta_engine.init_engine()
     main_engine.write_log("CTA策略初始化完成")
 
+    # 订阅行情
     cta_engine.init_all_strategies()
     sleep(60)   # Leave enough time to complete strategy initialization
     main_engine.write_log("CTA策略全部初始化")
