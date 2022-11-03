@@ -197,6 +197,7 @@ class BarGenerator:
         self.on_bar: Callable = on_bar
 
         self.interval: Interval = interval
+        # 小时K线的计数器
         self.interval_count: int = 0
 
         self.hour_bar: BarData = None
@@ -206,6 +207,7 @@ class BarGenerator:
         self.on_window_bar: Callable = on_window_bar
 
         self.last_tick: TickData = None
+        # 居然没有self.last_bar: BarData = None
 
     def update_tick(self, tick: TickData) -> None:
         """
@@ -214,6 +216,7 @@ class BarGenerator:
         new_minute: bool = False
 
         # Filter tick data with 0 last price
+        # 过滤流动性不好的合约
         if not tick.last_price:
             return
 
@@ -221,6 +224,7 @@ class BarGenerator:
         if self.last_tick and tick.datetime < self.last_tick.datetime:
             return
 
+        # self.bar初始化是None
         if not self.bar:
             new_minute = True
         elif (
@@ -257,10 +261,12 @@ class BarGenerator:
                 self.bar.low_price = min(self.bar.low_price, tick.low_price)
 
             self.bar.close_price = tick.last_price
+            # 持仓量
             self.bar.open_interest = tick.open_interest
             self.bar.datetime = tick.datetime
 
         if self.last_tick:
+            # 成交量变化
             volume_change: float = tick.volume - self.last_tick.volume
             self.bar.volume += max(volume_change, 0)
 
@@ -310,6 +316,8 @@ class BarGenerator:
         self.window_bar.open_interest = bar.open_interest
 
         # Check if window bar completed
+        # 整除余数为0 0是否定
+        # +1 是因为 9:00--1 9:01--2 9:02--3 9:03--4 9:04--5[其实是04分.59s] 这就有5根了
         if not (bar.datetime.minute + 1) % self.window:
             self.on_window_bar(self.window_bar)
             self.window_bar = None

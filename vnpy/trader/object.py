@@ -40,22 +40,29 @@ class TickData(BaseData):
     volume: float = 0
     turnover: float = 0
     open_interest: float = 0
+    # 上一笔成交价
     last_price: float = 0
+    # 上一笔成交量
     last_volume: float = 0
+    # 涨停价
     limit_up: float = 0
+    # 跌停价
     limit_down: float = 0
 
     open_price: float = 0
     high_price: float = 0
     low_price: float = 0
+    # 前一个收盘价，因为tick成交了才是他的收盘价，如果没有成交，就形成不了
     pre_close: float = 0
 
+    # 买家
     bid_price_1: float = 0
     bid_price_2: float = 0
     bid_price_3: float = 0
     bid_price_4: float = 0
     bid_price_5: float = 0
 
+    # 卖家
     ask_price_1: float = 0
     ask_price_2: float = 0
     ask_price_3: float = 0
