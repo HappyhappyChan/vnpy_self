@@ -46,7 +46,7 @@ class AtrTreeDemo(CtaTemplate):
         # 止损 到时候要/100
         "fixed_stop", 
         # 每天交易次数
-        "count_control",
+        "count_control"
     ]
 
     variables: list = [
@@ -66,12 +66,12 @@ class AtrTreeDemo(CtaTemplate):
         """"""
         # 初始化父类
         super().__init__(cta_engine, strategy_name, vt_symbol, setting)
-        self.bg = BarGenerator(self.on_bar, self.on_5min_bar)
+        self.bg = BarGenerator(self.on_bar, 5, self.on_5min_bar)
         self.am = ArrayManager()
 
         self.last_bar: BarData = None
 
-    def on_onit(self):
+    def on_init(self):
         self.write_log("策略初始化")
         # 下载K线
         self.load_bar(days=10)
@@ -110,10 +110,10 @@ class AtrTreeDemo(CtaTemplate):
             self.up_line = self.mid_line + self.atr_multiple * self.atr_value
             self.down_line = self.mid_line - self.atr_multiple * self.atr_value
             self.count_control_num = 0
-            print("""
+            print(f"""
                 mid_line: {self.mid_line}
                 atr_value:{self.atr_value}
-                时间: [bar.datetime]
+                时间: {bar.datetime}
                     """)
         if self.pos == 0 and self.count_control_num <= self.count_control:
             if bar.close_price > self.up_line :
