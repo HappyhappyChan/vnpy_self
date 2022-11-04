@@ -99,3 +99,69 @@ class BarGenerator_Miss(BarGenerator):
 
         self.on_window_bar(self.window_bar)
         self.window_bar = None
+
+class BarGenerator_Special(BarGenerator):
+    """特殊K线的合成方法：7min K线等"""
+    def __init__(self, 
+        on_bar: Callable,
+        window: int = 0, 
+        on_window_bar: Callable = None,
+        interval: Interval = Interval.MINUTE
+    ):
+        super().__init__(on_bar,
+            window,
+            on_window_bar,
+            interval
+        )
+        self.min_count_num: int = 0
+    
+    def update_bar(self, bar: BarData) -> None:
+
+        self.min_count_num += 1
+
+        if not self.window_bar:
+            dt: datetime = bar.datetime.replace(second=0, microsecond=0)
+            self.window_bar = BarData(
+                symbol=bar.symbol,
+                exchange=bar.exchange,
+                datetime=dt,
+                gateway_name=bar.gateway_name,
+                open_price=bar.open_price,
+                high_price=bar.high_price,
+                low_price=bar.low_price
+            )
+        # Otherwise, update high/low price into window bar
+        else:
+            self.window_bar.high_price = max(
+                self.window_bar.high_price,
+                bar.high_price
+            )
+            self.window_bar.low_price = min(
+                self.window_bar.low_price,
+                bar.low_price
+            )
+
+        # Update close price/volume/turnover into window bar
+        self.window_bar.close_price = bar.close_price
+        self.window_bar.volume += bar.volume
+        self.window_bar.turnover += bar.turnover
+        self.window_bar.open_interest = bar.open_interest
+
+        """
+        if not self.min_count_num % self.window:
+            self.on_window_bar(self.window_bar)
+            self.window_bar = None
+            self.min_count_num = 0
+        elif bar.datetime.hour == 14 and bar.datetime.minute == 59:
+            self.on_window_bar(self.window_bar)
+            self.window_bar = None
+            self.min_count_num = 0
+        """
+
+        # 对上面的代码进行整合
+        if (not self.min_count_num % self.window) or (bar.datetime.hour == 14 and bar.datetime.minute == 59):
+            self.on_window_bar(self.window_bar)
+            self.window_bar = None
+            self.min_count_num = 0
+            
+        self.last_bar = bar
