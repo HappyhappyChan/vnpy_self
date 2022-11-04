@@ -58,4 +58,44 @@ class BarGenerator_Daily(BarGenerator):
 
         self.last_bar = bar
 
+# 10:00-10:15 10:30-10:40
+class BarGenerator_Miss(BarGenerator):
+    """解决20min 30min一根K线消失的问题"""
+    def __init__(self, 
+        on_bar: Callable,
+        window: int = 0,
+        on_window_bar: Callable = None,
+        interval: Interval = Interval.MINUTE
+    ):
+        super().__init__(on_bar, window, on_window_bar, interval)
+        self.window = window  
+
+    def update_bar_new(self, bar: BarData):
+        """自定义方法，在10:14 K线到达时调用回调函数on_window_bar"""
+        if self.interval == Interval.MINUTE and bar.datetime.hour == 10 and bar.datetime.minute == 14:
+            if self.window == 20 or self.window == 30:
+                self.update_bar_minute_window_new(bar)
+        else:
+            super().update_bar(bar)
     
+    def update_bar_minute_window_new(self, bar: BarData):
+        """
+        10:00-10:14:59 生成1根10:00 的K线
+        10:30:00-10:39:59 生成另一根10:30的K线
+        """
+        self.window_bar.high_price = max(
+                self.window_bar.high_price,
+                bar.high_price
+            )
+        self.window_bar.low_price = min(
+            self.window_bar.low_price,
+            bar.low_price
+        )
+
+        self.window_bar.close_price = bar.close_price
+        self.window_bar.volume += bar.volume
+        self.window_bar.turnover += bar.turnover
+        self.window_bar.open_interest = bar.open_interest
+
+        self.on_window_bar(self.window_bar)
+        self.window_bar = None
