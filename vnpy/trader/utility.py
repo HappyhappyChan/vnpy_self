@@ -321,7 +321,9 @@ class BarGenerator:
         if not (bar.datetime.minute + 1) % self.window:
             self.on_window_bar(self.window_bar)
             self.window_bar = None
-
+        # 为什么没有 cache last bar object? \
+        # self.last_bar = bar
+        
     def update_bar_hour_window(self, bar: BarData) -> None:
         """"""
         # If not inited, create window bar object
