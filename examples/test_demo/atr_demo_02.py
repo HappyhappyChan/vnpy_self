@@ -8,13 +8,11 @@ from vnpy_ctastrategy import (
     BarGenerator,
     ArrayManager,
 )
-from vnpy.trader.constant import Direction, Offset
-"""
-处理市价单 \
-但是在回测里面给的bar是没有涨跌停价的 
-"""
-class AtrTreeDemo_Market(CtaTemplate):
-    
+from .cta_template_market import CtaTemplate_Market
+from vnpy_ctastrategy.base import MarketOrder
+
+class AtrTreeDemo02(CtaTemplate_Market):
+    # 可以用MA888.CZCE去测
     author = "Leroy"
 
     # 参数
@@ -75,10 +73,6 @@ class AtrTreeDemo_Market(CtaTemplate):
         self.am = ArrayManager()
 
         self.last_bar: BarData = None
-        # 涨跌停价
-        # 回测不适用
-        # self.limit_up = 0.0
-        # self.limit_down = 0.0
 
     def on_init(self):
         self.write_log("策略初始化")
@@ -91,11 +85,8 @@ class AtrTreeDemo_Market(CtaTemplate):
 
     def on_tick(self, tick: TickData):
         # 在回测中基本不会使用该方法
-        self.bg.update_tick(tick)
-        # 获取涨停价格
-        # self.limit_up = tick.limit_up
-        # 获取跌停价格
-        # self.limit_down = tick.limit_down
+        # self.bg.update_tick(tick)
+        pass
     
     def on_bar(self, bar: BarData):
         self.bg.update_bar(bar)
@@ -196,90 +187,6 @@ class AtrTreeDemo_Market(CtaTemplate):
         """"""
         pass
 
-    def buy_market(
-        self,
-        price: float,
-        volume: float,
-        stop: bool = False,
-        lock: bool = False,
-        net: bool = False
-    ) -> list:
-        """
-        Send buy order to open a long position.
-        """
-        return self.send_order(
-            Direction.LONG,
-            Offset.OPEN,
-            # self.limit_up,
-            price + 500, #因为源码里面取max的 只要+500保证足够大就行
-            volume,
-            stop,
-            lock,
-            net
-        )
-
-    def sell(
-        self,
-        price: float,
-        volume: float,
-        stop: bool = False,
-        lock: bool = False,
-        net: bool = False
-    ) -> list:
-        """
-        Send sell order to close a long position.
-        """
-        return self.send_order(
-            Direction.SHORT,
-            Offset.CLOSE,
-            # self.limit_down,
-            price - 500,
-            volume,
-            stop,
-            lock,
-            net
-        )
-
-    def short_market(
-        self,
-        price: float,
-        volume: float,
-        stop: bool = False,
-        lock: bool = False,
-        net: bool = False
-    ) -> list:
-        """
-        Send short order to open as short position.
-        """
-        return self.send_order(
-            Direction.SHORT,
-            Offset.OPEN,
-            # self.limit_down,
-            price - 500,
-            volume,
-            stop,
-            lock,
-            net
-        )
-
-    def cover_market(
-        self,
-        price: float,
-        volume: float,
-        stop: bool = False,
-        lock: bool = False,
-        net: bool = False
-    ) -> list:
-        """
-        Send cover order to close a short position.
-        """
-        return self.send_order(
-            Direction.LONG,
-            Offset.CLOSE,
-            # self.limit_up,
-            price + 500,
-            volume,
-            stop,
-            lock,
-            net
-        )
+    def on_market_order(self, MarketOrder: MarketOrder):
+        """"""
+        pass
