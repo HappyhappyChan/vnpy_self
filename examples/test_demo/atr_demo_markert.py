@@ -218,7 +218,7 @@ class AtrTreeDemo_Market(CtaTemplate):
             net
         )
 
-    def sell(
+    def sell_market(
         self,
         price: float,
         volume: float,
