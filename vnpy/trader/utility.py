@@ -884,6 +884,22 @@ class ArrayManager(object):
             return up, down
         return up[-1], down[-1]
 
+    def donchian_close(
+        self, n: int, array: bool = False
+    ) -> Union[
+        Tuple[np.ndarray, np.ndarray],
+        Tuple[float, float]
+    ]:
+        """
+        Donchian Channel.
+        """
+        up: np.ndarray = talib.MAX(self.close, n)
+        down: np.ndarray = talib.MIN(self.close, n)
+
+        if array:
+            return up, down
+        return up[-1], down[-1]
+
     def aroon(
         self,
         n: int,
