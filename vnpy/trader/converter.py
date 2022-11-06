@@ -161,9 +161,11 @@ class PositionHolding:
             elif trade.offset == Offset.CLOSEYESTERDAY:
                 self.short_yd -= trade.volume
             elif trade.offset == Offset.CLOSE:
+                # 上期所和上期能源优先平昨仓
                 if trade.exchange in [Exchange.SHFE, Exchange.INE]:
                     self.short_yd -= trade.volume
                 else:
+                    # 其他交易所优先平今仓
                     self.short_td -= trade.volume
 
                     if self.short_td < 0:
@@ -262,7 +264,7 @@ class PositionHolding:
 
         if req.volume > pos_available:
             return []
-        elif req.volume <= td_available:
+        elif req.volume <= td_available: # 优先平今
             req_td: OrderRequest = copy(req)
             req_td.offset = Offset.CLOSETODAY
             return [req_td]
@@ -292,6 +294,7 @@ class PositionHolding:
             yd_available: int = self.long_yd - self.long_yd_frozen
 
         # If there is td_volume, we can only lock position
+        # 如果昨仓够就先平昨仓，昨仓不够的话就要新开，从平仓变成开今天的新仓
         if td_volume:
             req_open: OrderRequest = copy(req)
             req_open.offset = Offset.OPEN
