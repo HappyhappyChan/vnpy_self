@@ -10,7 +10,7 @@ from vnpy_ctastrategy import (
 )
 
 from vnpy.trader.constant import Interval
-from .day_bar_generator import BarGenerator_Daily
+from day_bar_generator import BarGenerator_Daily
 from vnpy_ctastrategy.base import StopOrderStatus
 
 # 类的命名注意不能重复

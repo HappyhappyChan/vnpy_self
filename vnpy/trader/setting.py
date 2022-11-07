@@ -30,7 +30,7 @@ SETTINGS: Dict[str, Any] = {
     # "datafeed.password": "",
     # "datafeed.name": "tushare",
     # "datafeed.username": "token",
-    # "datafeed.password": "c044c2469407484159d4f7dfa2d438f5ac3e4fc89f540264c95ce268",
+    # "datafeed.password": "",
     "datafeed.name": "rqdata",
     "datafeed.username": "license",
     "datafeed.password": "",
@@ -47,7 +47,7 @@ SETTINGS: Dict[str, Any] = {
     "database.host": "localhost",
     "database.port": 3306,
     "database.user": "root",
-    "database.password": "cheng123"
+    "database.password": ""
 }
 
 

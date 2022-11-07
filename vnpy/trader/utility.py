@@ -989,6 +989,22 @@ class ArrayManager(object):
             return result
         return result[-1]
 
+    def cum_sum(self, size_:int):
+        """
+        cum sum. 自己定义的累加值
+        """
+        if self.size < size_:
+            return None
+        array_value: np.ndarray = np.zeros(size_)
+        array_value = (self.close_array - self.open_array)[-size_:]
+        
+        val = 0 
+        for i in array_value:
+            val += i
+        
+        return val
+
+
     def stoch(
         self,
         fastk_period: int,
