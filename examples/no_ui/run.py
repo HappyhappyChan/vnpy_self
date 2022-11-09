@@ -57,6 +57,7 @@ def run_child():
     """
     Running in the child process.
     """
+    # 日志输出文件
     SETTINGS["log.file"] = True
 
     event_engine = EventEngine()
