@@ -106,8 +106,10 @@ class BollChannelStrategy(CtaTemplate):
             self.intra_trade_high = bar.high_price
             self.intra_trade_low = bar.low_price
 
+            # 判断多头
             if self.cci_value > 0:
                 self.buy(self.boll_up, self.fixed_size, True)
+            # 判断空头
             elif self.cci_value < 0:
                 self.short(self.boll_down, self.fixed_size, True)
 
